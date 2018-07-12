@@ -15,15 +15,22 @@ import {
 } from 'react-viro';
 
 class HelloWorldSceneAR extends Component {
-  
-  state = {
-    spiders: [
-      {
-        nodeAnimation: {name: 'advance', run: true, loop: true},
-        spiderAnimation: {name: 'walk', run: true, loop: true}
-      }
-    ],  
-  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      spiders: [
+        {
+          position: [0, 0, -1],
+          nodeAnimation: {name: 'advance', run: true, loop: true},
+          spiderAnimation: {name: 'walk', run: true, loop: true}
+        }
+      ],  
+    };
+
+    this.runGame();
+  }
   
   killSpider = (index) => {
     const spiders = this.state.spiders;
@@ -52,6 +59,32 @@ class HelloWorldSceneAR extends Component {
     });
   }
 
+  async runGame() {
+    setInterval(() => this.spawnSpider(), 5000);
+  };
+
+  spawnSpider() {
+    const spiders = this.state.spiders;
+    const newSpider = {
+      position: this.randomPosition(),
+      nodeAnimation: {name: 'advance', run: true, loop: true},
+      spiderAnimation: {name: 'walk', run: true, loop: true}    
+    };
+
+    spiders.push(newSpider);
+
+    this.setState({
+      spiders
+    });
+  }
+
+  randomPosition() {
+    const randomX = (Math.random() * 4) - 2;
+    const randomZ = (Math.random() * 4) - 2;
+
+    return [randomX, 0, randomZ];
+  }
+
   render() {
     const spiders = this.state.spiders.map((spider, index) => (
       <ViroNode
@@ -59,7 +92,7 @@ class HelloWorldSceneAR extends Component {
         animation={spider.nodeAnimation}>
         <Viro3DObject
           source={require('./res/PB_Spider/spider.vrx')}
-          position={[0, 0, -1]}
+          position={spider.position}
           scale={[.001, .001, .001]}
           type="VRX"
           animation={spider.spiderAnimation}
