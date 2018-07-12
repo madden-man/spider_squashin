@@ -16,37 +16,53 @@ import {
 
 class HelloWorldSceneAR extends Component {
   
-// const defaultSpider = {
-//     animation: {name: 'walk', run: true, loop: true}
-//   }
-  
-state = {
-  spiders: [
-    {
-      animation: {name: 'walk', run: true, loop: true}
-    }
-  ],  
-}
+  state = {
+    spiders: [
+      {
+        nodeAnimation: {name: 'advance', run: true, loop: true},
+        spiderAnimation: {name: 'walk', run: true, loop: true}
+      }
+    ],  
+  };
   
   killSpider = (index) => {
     const spiders = this.state.spiders;
-    spiders[index].animation = {name: 'die', run: true, loop: false}
+    spiders[index].nodeAnimation = {};
+    spiders[index].spiderAnimation = {name: 'die', run: true, loop: false, onFinish: () => this.makeSpiderShrink(index)};
+    
     this.setState({
       spiders
-    })
+    });
+  };
+
+  makeSpiderShrink(index) {
+    const spiders = this.state.spiders;
+    spiders[index].spiderAnimation = {name: 'shrinkSpider', run: true, loop: false, onFinish: () => this.onSpiderShrunk(index)};
+
+    this.setState({
+      spiders
+    });
+  };
+
+  onSpiderShrunk(index) {
+    var spiders = [...this.state.spiders];
+    spiders.splice(index, 1);
+    this.setState({ 
+      spiders 
+    });
   }
 
   render() {
     const spiders = this.state.spiders.map((spider, index) => (
       <ViroNode
         key={index}
-        animation={{name: 'advance', run: true, loop: true}}>
+        animation={spider.nodeAnimation}>
         <Viro3DObject
           source={require('./res/PB_Spider/spider.vrx')}
-          position={[-1, 0, -1]}
+          position={[0, 0, -1]}
           scale={[.001, .001, .001]}
           type="VRX"
-          animation={spider.animation}
+          animation={spider.spiderAnimation}
           dragType="FixedDistance" onDrag={()=>{}}
           onClick={()=>{this.killSpider(index)}}
         />
@@ -61,10 +77,11 @@ state = {
       </ViroARScene>
     );
   }
-}
+};
 
 ViroAnimations.registerAnimations({
-  advance: {properties: {positionZ: "+=0.3"}, duration:2000}
+  advance: {properties: {positionZ: "+=0.3"}, duration:2000},
+  shrinkSpider: {properties: {scaleX: 0.00001, scaleY: 0.00001, scaleZ: 0.00001}, duration: 2000},
 });
 
 var styles = StyleSheet.create({
