@@ -208,13 +208,15 @@ class HelloWorldSceneAR extends Component {
 
     return (
       <ViroARScene onTrackingInitialized={()=>{console.log('hi')}}>
-        <ViroAmbientLight color={"#aaaaaa"} />
+        <ViroAmbientLight color={"#8b0000"} />
         <ViroSpotLight innerAngle={5} outerAngle={90} direction={[0,-1,-.2]} position={[0, 3, 1]} color="#ffffff" castsShadow={true} />
         {spiders}
         {sounds}
-        {/* <ViroBox style={styles.scoreContainer}>
-          <ViroText style={styles.score}>Score: {score}</ViroText>
-        </ViroBox> */}
+        <ViroText style={styles.score}
+          text={`Score: ${score}`}
+          textAlign="right"
+          width={2} height={2}
+          position={[0, 0, -2]} />
       </ViroARScene>
     );
   }
