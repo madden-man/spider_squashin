@@ -65,7 +65,8 @@ export default class ViroSample extends Component {
   _getARNavigator() {
     return (
       <ViroARSceneNavigator {...this.state.sharedProps}
-        initialScene={{scene: InitialARScene}} />
+        initialScene={{scene: InitialARScene}}
+        debug={true} />
     );
   }
 
